@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TripGlide - Compare Cheap Car Rentals</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="#main-page">TripGlide</a>
+                </div>
+                <nav class="main-nav">
+                    <ul class="nav-links">
+                        <!-- <li><a href="index.html" class="active"><i class="fas fa-search"></i> Search</a></li> -->
+                        <li><a href="#"><i class="far fa-heart"></i> Saved</a></li>
+                        <li><a href="#"><i class="far fa-bell"></i> Alerts</a></li>
+                        <li><a href="#"><i class="far fa-user"></i> Account</a></li>
+                    </ul>
+                </nav>
+                <div class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Main Page Section -->
+        <section id="main-page" class="active-page">
+            <!-- Search Tabs -->
+            <section class="search-tabs-container">
+                <div class="container">
+                    <div class="search-tabs">
+                        <a href="index.html" class="tab"><i class="fas fa-plane"></i> Flights</a>
+                        <a href="hotels.html" class="tab"><i class="fas fa-hotel"></i> Hotels</a>
+                        <a href="cars.html" class="tab active"><i class="fas fa-car"></i> Car Hire</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Car Search Section -->
+            <section class="car-search-section">
+                <div class="container">
+                    <div class="search-box">
+                        <div class="search-fields">
+                            <div class="search-field location-field">
+                                <label>Pick-up location</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <input type="text" id="location-input" placeholder="City, airport, or address">
+                                </div>
+                            </div>
+
+                            <div class="search-field pick-up-field">
+                                <label>Pick-up date</label>
+                                <div class="input-with-icon">
+                                    <i class="far fa-calendar-alt"></i>
+                                    <input type="text" id="pick-up-date" placeholder="Add date" onfocus="(this.type='date')">
+                                </div>
+                            </div>
+
+                            <div class="search-field drop-off-field">
+                                <label>Drop-off date</label>
+                                <div class="input-with-icon">
+                                    <i class="far fa-calendar-alt"></i>
+                                    <input type="text" id="drop-off-date" placeholder="Add date" onfocus="(this.type='date')">
+                                </div>
+                            </div>
+
+                            <div class="search-field time-field">
+                                <label>Pick-up time</label>
+                                <select id="pick-up-time">
+                                    <option>10:00 AM</option>
+                                    <option>11:00 AM</option>
+                                    <option>12:00 PM</option>
+                                    <option>1:00 PM</option>
+                                    <option>2:00 PM</option>
+                                    <option>3:00 PM</option>
+                                    <option>4:00 PM</option>
+                                    <option>5:00 PM</option>
+                                </select>
+                            </div>
+
+                            <div class="search-field time-field">
+                                <label>Drop-off time</label>
+                                <select id="drop-off-time">
+                                    <option>10:00 AM</option>
+                                    <option>11:00 AM</option>
+                                    <option>12:00 PM</option>
+                                    <option>1:00 PM</option>
+                                    <option>2:00 PM</option>
+                                    <option>3:00 PM</option>
+                                    <option>4:00 PM</option>
+                                    <option>5:00 PM</option>
+                                </select>
+                            </div>
+
+                            <div class="search-field driver-field">
+                                <label>Driver's age</label>
+                                <select id="driver-age">
+                                    <option>18-25</option>
+                                    <option selected>26-30</option>
+                                    <option>31-40</option>
+                                    <option>41-50</option>
+                                    <option>51-60</option>
+                                    <option>61+</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="search-actions">
+                            <button class="btn btn-primary search-btn" id="search-cars-btn">
+                                <i class="fas fa-search"></i> Search cars
+                            </button>
+                            <div class="search-options">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="same-location" checked="checked">
+                                    <span class="checkmark"></span>
+                                    <span>Return to same location</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Popular Locations -->
+            <section class="popular-section">
+                <div class="container">
+                    <h2 class="section-title">Popular rental locations</h2>
+                    <div class="popular-grid" id="popular-grid">
+                        <div class="location-card">
+                            <img src="assets/nyc.jpg" alt="New York">
+                            <div class="location-info">
+                                <h3>New York</h3>
+                                <p>From $25/day</p>
+                            </div>
+                        </div>
+                        <div class="location-card">
+                            <img src="assets/los-angeles.jpg" alt="Los Angeles">
+                            <div class="location-info">
+                                <h3>Los Angeles</h3>
+                                <p>From $28/day</p>
+                            </div>
+                        </div>
+                        <div class="location-card">
+                            <img src="assets/miami.jpg" alt="Miami">
+                            <div class="location-info">
+                                <h3>Miami</h3>
+                                <p>From $22/day</p>
+                            </div>
+                        </div>
+                        <div class="location-card">
+                            <img src="assets/las-vegas.jpg" alt="Las Vegas">
+                            <div class="location-info">
+                                <h3>Las Vegas</h3>
+                                <p>From $20/day</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        <section class="deals-section">
+            <div class="container">
+              <h2 class="section-title">Best Car Rental Deals</h2>
+              <div class="deals-grid">
+                <!-- Car Card 1 -->
+                <div class="car-card">
+                  <div class="car-card-img-container">
+                    <img src="assets/economy-car.jpg" alt="Economy Car">
+                    <span class="car-badge">Popular</span>
+                  </div>
+                  <div class="car-info">
+                    <h3>Economy Car</h3>
+                    <p class="car-type">Toyota Yaris or similar</p>
+                    <div class="car-features">
+                      <div class="car-feature">
+                        <i class="fas fa-user"></i>
+                        <span>4</span>
+                      </div>
+                      <div class="car-feature">
+                        <i class="fas fa-suitcase"></i>
+                        <span>1</span>
+                      </div>
+                      <div class="car-feature">
+                        <i class="fas fa-snowflake"></i>
+                        <span>A/C</span>
+                      </div>
+                    </div>
+                    <div class="car-price-container">
+                      <div class="car-price">
+                        <span class="price-amount">$24</span>
+                        <span class="price-period">/day</span>
+                      </div>
+                      <button class="book-now">Book Now</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="car-card">
+                    <div class="car-card-img-container">
+                        <img src="assets/compact-car.jpg" alt="Compact Car">
+                      <span class="car-badge">Popular</span>
+                    </div>
+                    <div class="car-info">
+                      <h3>Compact Car</h3>
+                      <p class="car-type">Honda Civic or similar</p>
+                      <div class="car-features">
+                        <div class="car-feature">
+                          <i class="fas fa-user"></i>
+                          <span>5</span>
+                        </div>
+                        <div class="car-feature">
+                          <i class="fas fa-suitcase"></i>
+                          <span>2</span>
+                        </div>
+                        <div class="car-feature">
+                          <i class="fas fa-snowflake"></i>
+                          <span>A/C</span>
+                        </div>
+                      </div>
+                      <div class="car-price-container">
+                        <div class="car-price">
+                          <span class="price-amount">$32</span>
+                          <span class="price-period">/day</span>
+                        </div>
+                        <button class="book-now">Book Now</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="car-card">
+                    <div class="car-card-img-container">
+                        <img src="assets/luxury-car.jpg" alt="Luxury Car">
+                      <span class="car-badge">Popular</span>
+                    </div>
+                    <div class="car-info">
+                      <h3>Luxury Car</h3>
+                      <p class="car-type">Mercedes E-Class or similar</p>
+                      <div class="car-features">
+                        <div class="car-feature">
+                          <i class="fas fa-user"></i>
+                          <span>5</span>
+                        </div>
+                        <div class="car-feature">
+                          <i class="fas fa-suitcase"></i>
+                          <span>3</span>
+                        </div>
+                        <div class="car-feature">
+                          <i class="fas fa-snowflake"></i>
+                          <span>A/C</span>
+                        </div>
+                      </div>
+                      <div class="car-price-container">
+                        <div class="car-price">
+                          <span class="price-amount">$89</span>
+                          <span class="price-period">/day</span>
+                        </div>
+                        <button class="book-now">Book Now</button>
+                      </div>
+                    </div>
+                  </div>
+                
+                
+                <!-- Additional car cards would follow the same structure -->
+              </div>
+            </div>
+          </section>
+
+        <!-- Search Results Page -->
+        <section id="results-page" class="search-results hidden-page">
+            <div class="container">
+                <!-- Search Summary -->
+                <div class="search-summary">
+                    <div class="rental-summary">
+                        <h2 class="location" id="location-display">Los Angeles (LAX)</h2>
+                        <div class="rental-details">
+                            <span id="rental-dates">20 Apr 10:00 AM - 27 Apr 10:00 AM</span>
+                            <span class="divider">•</span>
+                            <span id="driver-age-display">Driver age: 26-30</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" id="modify-search-btn">
+                        <i class="fas fa-edit"></i> Modify search
+                    </button>
+                </div>
+
+                <!-- Filters Section -->
+                <div class="filters-section">
+                    <div class="active-filters">
+                        <h3>Filters</h3>
+                        <div class="filter-tags" id="active-filters">
+                            <span class="filter-tag">Same location return <i class="fas fa-times"></i></span>
+                        </div>
+                    </div>
+                    <div class="filter-options">
+                        <button class="filter-btn" data-filter="type">
+                            <i class="fas fa-car"></i> Car type <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <button class="filter-btn" data-filter="price">
+                            <i class="fas fa-dollar-sign"></i> Price <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <button class="filter-btn" data-filter="seats">
+                            <i class="fas fa-user"></i> Seats <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <button class="filter-btn" data-filter="features">
+                            <i class="fas fa-cogs"></i> Features <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <button class="filter-btn" data-filter="supplier">
+                            <i class="fas fa-building"></i> Supplier <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sort Options -->
+                <div class="sort-options">
+                    <span>Sort by:</span>
+                    <button class="sort-btn active" data-sort="recommended">Recommended</button>
+                    <button class="sort-btn" data-sort="price">Price (low to high)</button>
+                    <button class="sort-btn" data-sort="price-desc">Price (high to low)</button>
+                    <button class="sort-btn" data-sort="seats">Seats</button>
+                </div>
+
+                <!-- Results List -->
+                <div class="results-list" id="results-list">
+                    <!-- Car cards will be generated dynamically -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>TripGlide</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Terms of use</a></li>
+                        <li><a href="#">Privacy policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Explore</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Countries</a></li>
+                        <li><a href="#">Regions</a></li>
+                        <li><a href="#">Cities</a></li>
+                        <li><a href="#">Airports</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Help centre</a></li>
+                        <li><a href="#">Travel articles</a></li>
+                        <li><a href="#">Seasonal deals</a></li>
+                        <li><a href="#">Travel restrictions</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Apps</h3>
+                    <div class="app-buttons">
+                        <button class="app-btn">
+                            <i class="fab fa-apple app-icon"></i>
+                            <div class="app-text">
+                                <span>Download on the</span>
+                                <span>App Store</span>
+                            </div>
+                        </button>
+                        <button class="app-btn">
+                            <i class="fab fa-google-play app-icon"></i>
+                            <div class="app-text">
+                                <span>Get it on</span>
+                                <span>Google Play</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="copyright">© 2025 TripGlide - All rights reserved</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

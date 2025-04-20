@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TripGlide - Sign Up or Log In</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <style>
+        /* Additional styles for auth pages */
+        .auth-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .auth-tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .auth-tab.active {
+            color: var(--color-primary);
+            border-bottom: 3px solid var(--color-primary);
+        }
+        
+        .auth-form {
+            display: none;
+        }
+        
+        .auth-form.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--color-text-dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--color-primary);
+            outline: none;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+        
+        .input-with-icon input {
+            padding-left: 40px;
+        }
+        
+        .btn-auth {
+            width: 100%;
+            padding: 1rem;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .btn-auth:hover {
+            background: var(--color-primary-dark);
+        }
+        
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: #999;
+        }
+        
+        .auth-divider::before,
+        .auth-divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .auth-divider span {
+            padding: 0 1rem;
+        }
+        
+        .social-auth {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .btn-social {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-social i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .btn-google {
+            background: white;
+            color: #4285F4;
+        }
+        
+        .btn-facebook {
+            background: #1877F2;
+            color: white;
+        }
+        
+        .btn-apple {
+            background: black;
+            color: white;
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: #666;
+        }
+        
+        .auth-footer a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .auth-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .auth-tab {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">TripGlide</a>
+                </div>
+                <nav class="main-nav">
+                    <ul class="nav-links">
+                        <!-- <li><a href="index.html"><i class="fas fa-search"></i> Search</a></li> -->
+                        <li><a href="#"><i class="far fa-heart"></i> Saved</a></li>
+                        <li><a href="#"><i class="far fa-bell"></i> Alerts</a></li>
+                        <li><a href="#" class="active"><i class="far fa-user"></i> Account</a></li>
+                    </ul>
+                </nav>
+                <div class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="auth-section">
+            <div class="container">
+                <div class="auth-container">
+                    <div class="auth-tabs">
+                        <div class="auth-tab active" data-tab="login">Log In</div>
+                        <div class="auth-tab" data-tab="signup">Sign Up</div>
+                    </div>
+                    
+                    <!-- Login Form -->
+                    <form id="login-form" class="auth-form active">
+                        <div class="form-group">
+                            <label for="login-email">Email</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="login-email" class="form-control" placeholder="Enter your email" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="login-password" class="form-control" placeholder="Enter your password" required>
+                            </div>
+                            <div class="text-right">
+                                <a href="#" class="forgot-password">Forgot password?</a>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn-auth">Log In</button>
+                        
+                        <div class="auth-divider">
+                            <span>or continue with</span>
+                        </div>
+                        
+                        <div class="social-auth">
+                            
+                                <!-- Google Sign-In Button -->
+<div id="g_id_onload"
+     data-client_id="420681993853-tg4m31m6ahi0g8fjffl3hs7gbcclps3c.apps.googleusercontent.com"
+     data-context="signup"
+     data-ux_mode="popup"
+     data-callback="handleGoogleSignIn"
+     data-auto_prompt="false">
+</div>
+
+<div class="g_id_signin"
+     data-type="standard"
+     data-shape="rectangular"
+     data-theme="outline"
+     data-text="signup_with"
+     data-size="large"
+     data-logo_alignment="left"
+     style="width: 100%; margin-bottom: 1rem;">
+</div>
+                            
+                            <button type="button" class="btn-social btn-facebook">
+                                <i class="fab fa-facebook-f"></i> Facebook
+                            </button>
+                            <button type="button" class="btn-social btn-apple">
+                                <i class="fab fa-apple"></i> Apple
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Signup Form -->
+                    <form id="signup-form" class="auth-form">
+                        <div class="form-group">
+                            <label for="signup-name">Full Name</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="signup-name" class="form-control" placeholder="Enter your full name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signup-email">Email</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="signup-email" class="form-control" placeholder="Enter your email" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signup-password">Password</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="signup-password" class="form-control" placeholder="Create a password" required>
+                            </div>
+                            <small class="text-muted">Use 8 or more characters with a mix of letters, numbers & symbols</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signup-confirm">Confirm Password</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="signup-confirm" class="form-control" placeholder="Confirm your password" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="terms-agree" required>
+                                <span class="checkmark"></span>
+                                <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn-auth">Create Account</button>
+                        
+                        <div class="auth-divider">
+                            <span>or sign up with</span>
+                        </div>
+                        
+                        <div class="social-auth">
+                            
+                                <div id="g_id_onload"
+                                     data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+                                     data-context="signup"
+                                     data-ux_mode="popup"
+                                     data-callback="handleGoogleSignIn"
+                                     data-auto_prompt="false">
+                                </div>
+
+                                <div class="g_id_signin"
+                                     data-type="standard"
+                                     data-shape="rectangular"
+                                     data-theme="outline"
+                                     data-text="signup_with"
+                                     data-size="large"
+                                     data-logo_alignment="left">
+                                </div>
+                            
+                            <button type="button" class="btn-social btn-facebook">
+                                <i class="fab fa-facebook-f"></i> Facebook
+                            </button>
+                            <button type="button" class="btn-social btn-apple">
+                                <i class="fab fa-apple"></i> Apple
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="auth-footer">
+                        <div id="login-footer" class="auth-footer-text">
+                            Don't have an account? <a href="#" class="switch-to-signup">Sign up</a>
+                        </div>
+                        <div id="signup-footer" class="auth-footer-text" style="display: none;">
+                            Already have an account? <a href="#" class="switch-to-login">Log in</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer (Same as other pages) -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>TripGlide</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Terms of use</a></li>
+                        <li><a href="#">Privacy policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Explore</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Countries</a></li>
+                        <li><a href="#">Regions</a></li>
+                        <li><a href="#">Cities</a></li>
+                        <li><a href="#">Airports</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Help centre</a></li>
+                        <li><a href="#">Travel articles</a></li>
+                        <li><a href="#">Seasonal deals</a></li>
+                        <li><a href="#">Travel restrictions</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Apps</h3>
+                    <div class="app-buttons">
+                        <button class="app-btn">
+                            <i class="fab fa-apple app-icon"></i>
+                            <div class="app-text">
+                                <span>Download on the</span>
+                                <span>App Store</span>
+                            </div>
+                        </button>
+                        <button class="app-btn">
+                            <i class="fab fa-google-play app-icon"></i>
+                            <div class="app-text">
+                                <span>Get it on</span>
+                                <span>Google Play</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="copyright">© 2025 TripGlide - All rights reserved</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        // Tab switching functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginTab = document.querySelector('.auth-tab[data-tab="login"]');
+            const signupTab = document.querySelector('.auth-tab[data-tab="signup"]');
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const loginFooter = document.getElementById('login-footer');
+            const signupFooter = document.getElementById('signup-footer');
+            const switchToSignupLinks = document.querySelectorAll('.switch-to-signup');
+            const switchToLoginLinks = document.querySelectorAll('.switch-to-login');
+            
+            // Switch to Signup
+            function showSignup() {
+                loginTab.classList.remove('active');
+                signupTab.classList.add('active');
+                loginForm.classList.remove('active');
+                signupForm.classList.add('active');
+                loginFooter.style.display = 'none';
+                signupFooter.style.display = 'block';
+            }
+            
+            // Switch to Login
+            function showLogin() {
+                signupTab.classList.remove('active');
+                loginTab.classList.add('active');
+                signupForm.classList.remove('active');
+                loginForm.classList.add('active');
+                signupFooter.style.display = 'none';
+                loginFooter.style.display = 'block';
+            }
+            
+            // Tab click events
+            loginTab.addEventListener('click', showLogin);
+            signupTab.addEventListener('click', showSignup);
+            
+            // Footer link events
+            switchToSignupLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showSignup();
+                });
+            });
+            
+            switchToLoginLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showLogin();
+                });
+            });
+            
+            // Form submission (would be handled with backend in real implementation)
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Login logic would go here
+                console.log('Login submitted');
+            });
+            
+            signupForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Signup logic would go here
+                console.log('Signup submitted');
+            });
+        });
+        function handleGoogleSignIn(response) {
+    const credential = response.credential;
+    
+    fetch('http://localhost:3000/api/auth/google', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: credential })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Store token in localStorage
+            localStorage.setItem('tripglide_token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            
+            // Redirect to dashboard or home page
+            window.location.href = '/dashboard.html';
+        } else {
+            alert('Authentication failed: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Authentication error. Please try again.');
+    });
+}
+
+// Add this to your existing DOMContentLoaded event listener
+document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    // Handle regular email/password login
+    console.log('Regular login submitted');
+});
+
+document.getElementById('signup-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    // Handle regular signup
+    console.log('Regular signup submitted');
+});
+    </script>
+</body>
+</html>

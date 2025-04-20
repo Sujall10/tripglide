@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TripGlide - Compare Cheap Flights, Hotels & Car Hire</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="#main-page">TripGlide</a>
+                </div>
+                <nav class="main-nav">
+                    <ul class="nav-links">
+                        <!-- <li><a href="index.html" class="active"><i class="fas fa-search"></i> Search</a></li> -->
+                        <li><a href="#"><i class="far fa-heart"></i> Saved</a></li>
+                        <li><a href="#"><i class="far fa-bell"></i> Alerts</a></li>
+                        <li><a href="user_login.html"><i class="far fa-user"></i> Account</a></li>
+                    </ul>
+                </nav>
+                <div class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    
+
+    <!-- Main Content -->
+    <main>
+        <!-- Main Page Section -->
+        <section id="main-page" class="active-page">
+            <!-- Search Tabs -->
+    <section class="search-tabs-container">
+        <div class="container">
+            <div class="search-tabs">
+                <a href="index.html" class="tab active"><i class="fas fa-plane"></i> Flights</a>
+                <a href="hotels.html" class="tab"><i class="fas fa-hotel"></i> Hotels</a>
+                <a href="cars.html" class="tab"><i class="fas fa-car"></i> Car Hire</a>
+            </div>
+        </div>
+    </section>
+            <!-- Flight Search Section -->
+            <section class="flight-search-section">
+                <div class="container">
+                    <div class="search-box">
+                        <div class="trip-type">
+                            <button class="trip-option active" data-trip="return">Return</button>
+                            <button class="trip-option" data-trip="one-way">One way</button>
+                            <button class="trip-option" data-trip="multi-city">Multi-city</button>
+                        </div>
+
+                        <div class="search-fields">
+                            <div class="search-field from-field">
+                                <label>From</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-plane-departure"></i>
+                                    <input type="text" id="from-input" placeholder="City or airport" value="Delhi (DEL)">
+                                </div>
+                            </div>
+
+                            <button class="swap-btn" id="swap-locations">
+                                <i class="fas fa-exchange-alt"></i>
+                            </button>
+
+                            <div class="search-field to-field">
+                                <label>To</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-plane-arrival"></i>
+                                    <input type="text" id="to-input" placeholder="City or airport">
+                                </div>
+                            </div>
+
+                            <div class="search-field depart-field">
+                                <label>Depart</label>
+                                <div class="input-with-icon">
+                                    <i class="far fa-calendar-alt"></i>
+                                    <input type="text" id="depart-date" placeholder="Add date" onfocus="(this.type='date')">
+                                </div>
+                            </div>
+
+                            <div class="search-field return-field">
+                                <label>Return</label>
+                                <div class="input-with-icon">
+                                    <i class="far fa-calendar-alt"></i>
+                                    <input type="text" id="return-date" placeholder="Add date" onfocus="(this.type='date')">
+                                </div>
+                            </div>
+
+                            <div class="search-field passengers-field">
+                                <label>Passengers</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-user-friends"></i>
+                                    <input type="text" id="passenger-input" placeholder="1 adult" readonly>
+                                </div>
+                                <div class="passengers-dropdown">
+                                    <div class="passenger-type">
+                                        <span>Adults</span>
+                                        <div class="passenger-controls">
+                                            <button class="passenger-minus" data-type="adult">-</button>
+                                            <span class="passenger-count" id="adult-count">1</span>
+                                            <button class="passenger-plus" data-type="adult">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="passenger-type">
+                                        <span>Children</span>
+                                        <div class="passenger-controls">
+                                            <button class="passenger-minus" data-type="child">-</button>
+                                            <span class="passenger-count" id="child-count">0</span>
+                                            <button class="passenger-plus" data-type="child">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="passenger-type">
+                                        <span>Infants</span>
+                                        <div class="passenger-controls">
+                                            <button class="passenger-minus" data-type="infant">-</button>
+                                            <span class="passenger-count" id="infant-count">0</span>
+                                            <button class="passenger-plus" data-type="infant">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="cabin-class">
+                                        <span>Cabin class</span>
+                                        <select id="cabin-class">
+                                            <option>Economy</option>
+                                            <option>Premium economy</option>
+                                            <option>Business</option>
+                                            <option>First class</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn done-btn">Done</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="search-actions">
+                            <button class="btn btn-primary search-btn" id="search-flights-btn">
+                                <i class="fas fa-search"></i> Search flights
+                            </button>
+                            <div class="search-options">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="direct-flights" checked="checked">
+                                    <span class="checkmark"></span>
+                                    <span>Direct flights only</span>
+                                </label>
+                                <button class="btn btn-link add-nearby">
+                                    <i class="fas fa-plus-circle"></i> Add nearby airports
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trending Destinations -->
+            <section class="trending-section">
+                <div class="container">
+                    <h2 class="section-title">Trending destinations</h2>
+                    <div class="trending-grid" id="trending-grid">
+                        <!-- Cards will be generated dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Flight Deals -->
+            <section class="deals-section">
+                <div class="container">
+                    <h2 class="section-title">Cheap flight deals</h2>
+                    <div class="deals-grid" id="deals-grid">
+                        <!-- Cards will be generated dynamically -->
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- Search Results Page -->
+        <section id="results-page" class="search-results hidden-page">
+            <div class="container">
+                <!-- Search Summary -->
+                <div class="search-summary">
+                    <div class="route-summary">
+                        <h2 class="route" id="route-display">Delhi to Mumbai</h2>
+                        <div class="trip-details">
+                            <span id="date-display">20 Apr - 27 Apr</span>
+                            <span class="divider">•</span>
+                            <span id="passengers-display">1 adult</span>
+                            <span class="divider">•</span>
+                            <span id="cabin-display">Economy</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" id="modify-search-btn">
+                        <i class="fas fa-edit"></i> Modify search
+                    </button>
+                </div>
+
+                <!-- Filters Section -->
+                <div class="filters-section">
+                    <div class="active-filters">
+                        <h3>Filters</h3>
+                        <div class="filter-tags" id="active-filters">
+                            <span class="filter-tag">Direct flights only <i class="fas fa-times"></i></span>
+                        </div>
+                    </div>
+                    <div class="filter-options">
+                        <button class="filter-btn" data-filter="stops">
+                            <i class="fas fa-plane"></i> Stops <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <button class="filter-btn" data-filter="times">
+                            <i class="far fa-clock"></i> Times <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <button class="filter-btn" data-filter="airlines">
+                            <i class="fas fa-plane"></i> Airlines <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <button class="filter-btn" data-filter="duration">
+                            <i class="fas fa-hourglass-half"></i> Duration <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sort Options -->
+                <div class="sort-options">
+                    <span>Sort by:</span>
+                    <button class="sort-btn active" data-sort="best">Best</button>
+                    <button class="sort-btn" data-sort="cheapest">Cheapest</button>
+                    <button class="sort-btn" data-sort="fastest">Fastest</button>
+                </div>
+
+                <!-- Results List -->
+                <div class="results-list" id="results-list">
+                    <!-- Flight cards will be generated dynamically -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>TripGlide</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Terms of use</a></li>
+                        <li><a href="#">Privacy policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Explore</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Countries</a></li>
+                        <li><a href="#">Regions</a></li>
+                        <li><a href="#">Cities</a></li>
+                        <li><a href="#">Airports</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Help centre</a></li>
+                        <li><a href="#">Travel articles</a></li>
+                        <li><a href="#">Seasonal deals</a></li>
+                        <li><a href="#">Travel restrictions</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Apps</h3>
+                    <div class="app-buttons">
+                        <button class="app-btn">
+                            <i class="fab fa-apple app-icon"></i>
+                            <div class="app-text">
+                                <span>Download on the</span>
+                                <span>App Store</span>
+                            </div>
+                        </button>
+                        <button class="app-btn">
+                            <i class="fab fa-google-play app-icon"></i>
+                            <div class="app-text">
+                                <span>Get it on</span>
+                                <span>Google Play</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="copyright">© 2025 TripGlide - All rights reserved</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
