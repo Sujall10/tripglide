@@ -1,115 +1,138 @@
-from flask import Flask, request, jsonify
-from google.oauth2 import id_token
-from google.auth.transport import requests as google_requests
-from flask_cors import CORS
-import datetime
-import jwt
 import os
-from functools import wraps
+import uuid
+import json
+from datetime import datetime
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session
+from flask_mail import Mail, Message
+from flask_cors import CORS
+from dotenv import load_dotenv
+import stripe
+from datas import FlightsData
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app)  # Enable CORS for all routes
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', os.urandom(24))
 
-# Configuration
-CLIENT_ID = '420681993853-tg4m31m6ahi0g8fjffl3hs7gbcclps3c.apps.googleusercontent.com'
-JWT_SECRET = 'your_strong_secret_key_here'  # Change this to a real secret key
+# Custom JSON encoder to handle dates
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        return super(CustomJSONEncoder, self).default(obj)
 
-# Mock database
-users_db = {}
-
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = None
-        
-        # Check for token in Authorization header
-        if 'Authorization' in request.headers:
-            token = request.headers['Authorization'].split()[1]
-            
-        if not token:
-            return jsonify({'message': 'Token is missing!'}), 401
-            
-        try:
-            data = jwt.decode(token, JWT_SECRET, algorithms=['HS256'])
-            current_user = data
-        except:
-            return jsonify({'message': 'Token is invalid!'}), 401
-            
-        return f(current_user, *args, **kwargs)
-    return decorated
+app.json_encoder = CustomJSONEncoder
 
 @app.route('/')
-def home():
-    return jsonify({
-        "service": "TripGlide Auth",
-        "status": "active",
-        "endpoints": {
-            "google_auth": "/api/auth/google (POST)",
-            "protected": "/api/protected (GET)"
-        },
-        "timestamp": datetime.datetime.utcnow().isoformat()
-    })
+def index():
+    flights_data = FlightsData()
+    return render_template('index.html', locations=flights_data.get_valid_locations())
 
-@app.route('/api/auth/google', methods=['POST'])
-def google_auth():
-    if not request.is_json:
-        return jsonify({"error": "Missing JSON in request"}), 400
-        
-    token = request.json.get('token')
-    if not token:
-        return jsonify({"error": "Missing token"}), 400
+# Get all locations
+@app.route('/api/locations', methods=['GET'])
+def get_locations():
+    flights_data = FlightsData()
+    return jsonify({"locations": flights_data.get_valid_locations()})
 
+# Search flights
+@app.route('/api/flights/search', methods=['GET'])
+def search_flights():
     try:
-        # Verify Google token
-        idinfo = id_token.verify_oauth2_token(
-            token, 
-            google_requests.Request(),
-            CLIENT_ID
+        # Get query parameters
+        from_location = request.args.get('from')
+        to_location = request.args.get('to')
+        date_str = request.args.get('date')
+        direct_only = request.args.get('directOnly', 'false').lower() == 'true'
+        cabin_class = request.args.get('cabinClass', 'economy').lower()
+        
+        # Validate required parameters
+        if not from_location or not to_location:
+            return jsonify({"message": "Missing required search parameters"}), 400
+        
+        # Use FlightsData to search for flights
+        flights_data = FlightsData()
+        flights = flights_data.search_flights(
+            departure_airport=from_location,
+            arrival_airport=to_location,
+            date=date_str,
+            direct_only=direct_only,
+            cabin_class=cabin_class
         )
         
-        # Check if user exists or create new
-        user_id = idinfo['sub']
-        if user_id not in users_db:
-            users_db[user_id] = {
-                'email': idinfo['email'],
-                'name': idinfo.get('name', ''),
-                'picture': idinfo.get('picture', ''),
-                'created_at': datetime.datetime.utcnow().isoformat()
-            }
+        return jsonify({"flights": flights})
+    except Exception as e:
+        print(f"Error searching flights: {e}")
+        return jsonify({"message": "Server error", "error": str(e)}), 500
 
-        # Create JWT token
-        token_data = {
-            "user_id": user_id,
-            "email": idinfo['email'],
-            "exp": datetime.datetime.utcnow() + datetime.timedelta(days=1)
-        }
-        auth_token = jwt.encode(token_data, JWT_SECRET, algorithm='HS256')
-
-        return jsonify({
-            "success": True,
-            "token": auth_token,
-            "user": {
-                "id": user_id,
-                "email": idinfo['email'],
-                "name": idinfo.get('name', ''),
-                "picture": idinfo.get('picture', '')
-            }
-        })
+# Add new location (admin functionality)
+@app.route('/api/locations', methods=['POST'])
+def add_location():
+    try:
+        data = request.json
         
-    except ValueError as e:
-        return jsonify({
-            "success": False,
-            "error": "Invalid token",
-            "message": str(e)
-        }), 401
+        # Check required fields
+        required_fields = ['name', 'code', 'city', 'country']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"message": f"Missing required field: {field}"}), 400
+        
+        # Use FlightsData to add a new location
+        flights_data = FlightsData()
+        result = flights_data.add_location(data)
+        
+        if result.get('error'):
+            return jsonify({"message": result['error']}), 400
+            
+        return jsonify(result['location']), 201
+    except Exception as e:
+        print(f"Error creating location: {e}")
+        return jsonify({"message": "Server error", "error": str(e)}), 500
 
-@app.route('/api/protected')
-@token_required
-def protected(current_user):
-    return jsonify({
-        "message": "Protected route accessed",
-        "user": current_user
-    })
+# Add new flight (admin functionality)
+@app.route('/api/get_flights', methods=['GET'])
+def get_flights():
+    print("🚀 /api/get_flights endpoint hit!")
+    try:
+        dep = request.args.get('departure')
+        arr = request.args.get('arrival')
+        # direct = request.args.get('directOnly')
+
+        query = {}
+        if dep:
+            query['departure_city'] = dep
+        if arr:
+            query['arrival_city'] = arr
+        # if direct is not None:
+        #     # assuming you have a `stops` field in your docs
+        #     query['stops'] = 0 if direct.lower() == 'true' else {'$gt': 0}
+
+        print("MongoDB query being executed:", query)
+        flights = FlightsData().get_flights(query)
+        print("Flights returned from DB:", flights)
+        
+        return jsonify({ 'flights': flights }), 200
+    except Exception as e:
+        print(f"Error retrieving flights: {e}")
+        return jsonify({"message": "Server error", "error": str(e)}), 500
+
+
+# Get a specific flight by ID
+@app.route('/api/flights/<flight_id>', methods=['GET'])
+def get_flight(flight_id):
+    try:
+        flights_data = FlightsData()
+        flight = flights_data.get_flight_by_id(flight_id)
+        
+        if not flight:
+            return jsonify({"message": "Flight not found"}), 404
+            
+        return jsonify(flight)
+    except Exception as e:
+        print(f"Error getting flight: {e}")
+        return jsonify({"message": "Server error", "error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(port=3000, debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)

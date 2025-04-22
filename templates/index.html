@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TripGlide - Compare Cheap Flights, Hotels & Car Hire</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 </head>
 <body>
@@ -19,7 +19,6 @@
                 </div>
                 <nav class="main-nav">
                     <ul class="nav-links">
-                        <!-- <li><a href="index.html" class="active"><i class="fas fa-search"></i> Search</a></li> -->
                         <li><a href="#"><i class="far fa-heart"></i> Saved</a></li>
                         <li><a href="#"><i class="far fa-bell"></i> Alerts</a></li>
                         <li><a href="user_login.html"><i class="far fa-user"></i> Account</a></li>
@@ -32,26 +31,24 @@
         </div>
     </header>
 
-    
-
     <!-- Main Content -->
     <main>
-        <!-- Main Page Section -->
         <section id="main-page" class="active-page">
             <!-- Search Tabs -->
-    <section class="search-tabs-container">
-        <div class="container">
-            <div class="search-tabs">
-                <a href="index.html" class="tab active"><i class="fas fa-plane"></i> Flights</a>
-                <a href="hotels.html" class="tab"><i class="fas fa-hotel"></i> Hotels</a>
-                <a href="cars.html" class="tab"><i class="fas fa-car"></i> Car Hire</a>
-            </div>
-        </div>
-    </section>
+            <section class="search-tabs-container">
+                <div class="container">
+                    <div class="search-tabs">
+                        <a href="index.html" class="tab active"><i class="fas fa-plane"></i> Flights</a>
+                        <a href="hotels.html" class="tab"><i class="fas fa-hotel"></i> Hotels</a>
+                        <a href="cars.html" class="tab"><i class="fas fa-car"></i> Car Hire</a>
+                    </div>
+                </div>
+            </section>
+
             <!-- Flight Search Section -->
             <section class="flight-search-section">
                 <div class="container">
-                    <div class="search-box">
+                    <form class="search-box">
                         <div class="trip-type">
                             <button class="trip-option active" data-trip="return">Return</button>
                             <button class="trip-option" data-trip="one-way">One way</button>
@@ -63,11 +60,13 @@
                                 <label>From</label>
                                 <div class="input-with-icon">
                                     <i class="fas fa-plane-departure"></i>
-                                    <input type="text" id="from-input" placeholder="City or airport" value="Delhi (DEL)">
+                                    <select id="location-from" name="location-from">
+                                        <option value="">-- Departure --</option>
+                                    </select>
                                 </div>
                             </div>
 
-                            <button class="swap-btn" id="swap-locations">
+                            <button class="swap-btn" id="swap-locations" type="button">
                                 <i class="fas fa-exchange-alt"></i>
                             </button>
 
@@ -75,7 +74,9 @@
                                 <label>To</label>
                                 <div class="input-with-icon">
                                     <i class="fas fa-plane-arrival"></i>
-                                    <input type="text" id="to-input" placeholder="City or airport">
+                                    <select id="location-to" name="location-to">
+                                        <option value="">-- Arrival --</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -135,13 +136,16 @@
                                             <option>First class</option>
                                         </select>
                                     </div>
-                                    <button class="btn done-btn">Done</button>
+                                    <button class="btn done-btn" type="button">Done</button>
                                 </div>
                             </div>
                         </div>
 
+                        <div id="step1Loader" style="display: none;">Loading locations...</div>
+                        <div id="step1Error" class="error-message" style="display: none;"></div>
+
                         <div class="search-actions">
-                            <button class="btn btn-primary search-btn" id="search-flights-btn">
+                            <button class="btn btn-primary search-btn" type="submit" id="search-flights-btn">
                                 <i class="fas fa-search"></i> Search flights
                             </button>
                             <div class="search-options">
@@ -150,12 +154,12 @@
                                     <span class="checkmark"></span>
                                     <span>Direct flights only</span>
                                 </label>
-                                <button class="btn btn-link add-nearby">
+                                <button class="btn btn-link add-nearby" type="button">
                                     <i class="fas fa-plus-circle"></i> Add nearby airports
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </section>
 
@@ -186,7 +190,7 @@
                 <!-- Search Summary -->
                 <div class="search-summary">
                     <div class="route-summary">
-                        <h2 class="route" id="route-display">Delhi to Mumbai</h2>
+                        <h2 class="route" id="route-display"></h2>
                         <div class="trip-details">
                             <span id="date-display">20 Apr - 27 Apr</span>
                             <span class="divider">•</span>
@@ -303,6 +307,11 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/back.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/result.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </body>
 </html>

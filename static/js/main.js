@@ -439,3 +439,9 @@ function generateSearchResults(sortType = 'best') {
         });
     }, 1500); // Simulating API delay of 1.5 seconds
 }
+
+
+
+
+
+
