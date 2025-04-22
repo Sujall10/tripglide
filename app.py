@@ -30,6 +30,12 @@ def index():
     flights_data = FlightsData()
     return render_template('index.html', locations=flights_data.get_valid_locations())
 
+
+@app.route('/ping')
+def ping():
+    return jsonify({"status": "ok"})
+
+
 # Get all locations
 @app.route('/api/locations', methods=['GET'])
 def get_locations():
