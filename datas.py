@@ -1,4 +1,3 @@
-# datas.py
 import os
 from datetime import datetime, timedelta
 from pymongo import MongoClient
@@ -11,8 +10,7 @@ mongo_uri = os.getenv('url')
 
 class FlightsData:
     def __init__(self):
-        # MongoDB connection
-        
+        """Initialize MongoDB connection and collections"""
         self.client = MongoClient(mongo_uri)
         self.db = self.client.get_database('FlightsData')
         
@@ -25,7 +23,6 @@ class FlightsData:
         try:
             # Get all locations and sort by name
             locations = list(self.locations_collection.find().sort('name', 1))
-            
             # Return just the location names
             return [loc['City'] for loc in locations]
         except Exception as e:
@@ -69,58 +66,53 @@ class FlightsData:
             print(f"Error adding location: {e}")
             return {'error': str(e)}
     
-    def search_flights(self, departure_airport, arrival_airport, date=None, direct_only=False, cabin_class='economy'):
+    def search_flights(self, departure_airport, arrival_airport, date_str=None, direct_only=False, cabin_class='economy'):
         """Search for flights based on criteria"""
         try:
-            # Build the query
+            # Base query (airports only)
             query = {
                 "departure.airport": departure_airport,
                 "arrival.airport": arrival_airport
             }
-            
-            # Add date filter if provided
-            if date:
+
+            # If a date is provided, parse and add a 24-hour range filter
+            if date_str:
                 try:
-                    # Parse date string (format: YYYY-MM-DD)
-                    search_date = datetime.strptime(date, "%Y-%m-%d")
+                    search_date = datetime.strptime(date_str, "%Y-%m-%d")
                     next_day = search_date + timedelta(days=1)
-                    
                     query["departure.date"] = {
                         "$gte": search_date,
                         "$lt": next_day
                     }
                 except ValueError:
-                    # If date format is invalid, ignore date filter
-                    pass
-            
+                    print(f"Invalid date format: {date_str}")
+
             # Add cabin class filter if provided and not 'all'
-            if cabin_class and cabin_class != 'all':
-                query["category"] = cabin_class
-            
+            if cabin_class and cabin_class.lower() != 'all':
+                query["category"] = cabin_class.lower()
+
             # Add direct flights filter if requested
             if direct_only:
                 query["stops"] = 0
-            
-            # Execute query
+
+            # Execute query, sort by price
             flights = list(self.flights_collection.find(query).sort("price", 1))
-            
-            # Format flights for JSON serialization
-            formatted_flights = []
-            for flight in flights:
-                # Convert ObjectId to string
-                flight['_id'] = str(flight['_id'])
-                formatted_flights.append(flight)
-            
-            return formatted_flights
+
+            # Convert all ObjectIds to strings before returning
+            for f in flights:
+                f['_id'] = str(f['_id'])
+
+            return flights
+
         except Exception as e:
             print(f"Error searching flights: {e}")
             return []
     
     def get_flights(self, filters=None):
+        """Get flights based on filters"""
         query = filters if filters else {}
         print("MongoDB query being executed:", query)
         return list(self.flights_collection.find(query, {'_id': 0}))
-
 
     def add_flight(self, flight_data):
         """Add a new flight to the database"""
@@ -156,7 +148,6 @@ class FlightsData:
             print(f"Error adding flight: {e}")
             return {'error': str(e)}
     
-    # Add methods for getting a specific flight, location, etc.
     def get_flight_by_id(self, flight_id):
         """Get a specific flight by ID"""
         try:
@@ -190,6 +181,3 @@ class FlightsData:
         except Exception as e:
             print(f"Error getting location: {e}")
             return None
-        
-# flight = FlightsData()
-# print(flight.get_flights())

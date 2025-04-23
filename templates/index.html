@@ -48,7 +48,7 @@
             <!-- Flight Search Section -->
             <section class="flight-search-section">
                 <div class="container">
-                    <form class="search-box">
+                    <form class="search-box" id="flight-form">
                         <div class="trip-type">
                             <button class="trip-option active" data-trip="return">Return</button>
                             <button class="trip-option" data-trip="one-way">One way</button>
@@ -312,6 +312,7 @@
     <script src="{{ url_for('static', filename='js/back.js') }}"></script>
     <script src="{{ url_for('static', filename='js/result.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="result.js"></script>
 </body>
 </html>

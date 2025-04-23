@@ -30,6 +30,20 @@ def index():
     flights_data = FlightsData()
     return render_template('index.html', locations=flights_data.get_valid_locations())
 
+@app.route('/hotels.html')
+def hotel():
+    flights_data = FlightsData()
+    return render_template('hotels.html', locations=flights_data.get_valid_locations())
+
+@app.route('/index.html')
+def index_back():
+    flights_data = FlightsData()
+    return render_template('index.html', locations=flights_data.get_valid_locations())
+
+@app.route('/cars.html')
+def cars():
+    flights_data = FlightsData()
+    return render_template('cars.html', locations=flights_data.get_valid_locations())
 
 @app.route('/ping')
 def ping():
@@ -100,9 +114,12 @@ def add_location():
 @app.route('/api/get_flights', methods=['GET'])
 def get_flights():
     print("🚀 /api/get_flights endpoint hit!")
+    print("All request args:", request.args)
     try:
         dep = request.args.get('departure')
         arr = request.args.get('arrival')
+        # arr_date = request.args.get('arrival_date')
+        dep_date = request.args.get('depart-date')
         # direct = request.args.get('directOnly')
 
         query = {}
@@ -110,15 +127,25 @@ def get_flights():
             query['departure_city'] = dep
         if arr:
             query['arrival_city'] = arr
+        # if arr_date:
+        #     query['arrival_date'] = arr_date
+        if dep_date:
+            try:
+                query['departure_date'] = datetime.strptime(dep_date, '%Y-%m-%d')
+            except ValueError:
+                return jsonify({'error': 'Invalid date format. Use YYYY-MM-DD.'}), 400
+
         # if direct is not None:
         #     # assuming you have a `stops` field in your docs
         #     query['stops'] = 0 if direct.lower() == 'true' else {'$gt': 0}
 
         print("MongoDB query being executed:", query)
-        flights = FlightsData().get_flights(query)
-        print("Flights returned from DB:", flights)
+        # flights = FlightsData().get_flights(query)
+        # print("Flights returned from DB:", flights)
+        results = list(FlightsData().flights_collection.find(query, {'_id': 0}))
+        return jsonify(results)
         
-        return jsonify({ 'flights': flights }), 200
+        # return jsonify({ 'flights': flights }), 200
     except Exception as e:
         print(f"Error retrieving flights: {e}")
         return jsonify({"message": "Server error", "error": str(e)}), 500

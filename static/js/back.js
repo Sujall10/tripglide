@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultsPage = document.getElementById('results-page');
     const modifySearchBtn = document.getElementById('modify-search-btn');
     const resultsListContainer = document.getElementById('results-list');
+    const departure = document.getElementById("location-from")?.value;
+    const arrival = document.getElementById("location-to").value;
+    const date = document.getElementById("depart-date").value;
     
     // Store all locations for later use
     let allLocations = [];
@@ -139,10 +142,12 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 hideLoader('step1Loader');
                 
-                if (data && data.locations && Array.isArray(data.locations)) {
-                    populateLocationDropdowns(data.locations);
+                // More flexible data handling
+                const locations = data.locations || data; // Handle both formats
+                if (Array.isArray(locations)) {
+                    populateLocationDropdowns(locations);
                 } else {
-                    throw new Error('Invalid data format');
+                    throw new Error('Invalid data format - expected array');
                 }
             })
             .catch(error => {
@@ -195,7 +200,18 @@ document.addEventListener('DOMContentLoaded', () => {
             text: opt.text
         }));
     }
-    
+
+    // Initialize Select2 after populating dropdowns
+$(document).ready(function() {
+    $('#location-from').select2({
+        placeholder: '-- Departure --',
+        width: '100%'
+    });
+    $('#location-to').select2({
+        placeholder: '-- Arrival --',
+        width: '100%'
+    });
+});
     // Function to search for flights
     function searchFlights(from, to, directOnly, dateFrom, dateTo, passengers, cabinClass) {
         // In a real app, this would be an API call
@@ -224,34 +240,117 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Function to fetch available flights from the database (using the get_flights API)
    // Function to fetch available flights from the database
+   // Function to fetch available flights
 function fetchAvailableFlights(from, to) {
     showLoader('searchLoader');
-  
+
+    const departDate = document.getElementById('depart-date')?.value;
+    
+    // Make sure parameters match your API's expected format
     const params = new URLSearchParams({
-      departure: from,
-      arrival:   to
+        departure: from,
+        arrival: to,
+        'depart-date': departDate  // Note the hyphen to match your API
     });
-  
-    fetch(`/api/get_flights?${params}`)
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then(data => {
-        hideLoader('searchLoader');
-        // data.flights is now our array
-        if (!Array.isArray(data.flights)) {
-          throw new Error('Invalid flight data format');
-        }
-        renderFlights(data.flights);
-      })
-      .catch(err => {
-        hideLoader('searchLoader');
-        showError('step1Error', 'Failed to load flights: ' + err.message);
-        console.error('Error fetching flights:', err);
-      });
-  }
-  
+
+    fetch(`http://127.0.0.1:5000/api/get_flights?${params}`)
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+            return res.json();
+        })
+        .then(data => {
+            hideLoader('searchLoader');
+            
+            // Debug: log the API response
+            console.log("API Response:", data);
+            
+            // Handle different response formats
+            const flights = data.flights || data.data || data;
+            
+            if (!Array.isArray(flights)) {
+                throw new Error('Invalid flight data format - expected array');
+            }
+            
+            renderFlights(flights);
+        })
+        .catch(err => {
+            hideLoader('searchLoader');
+            showError('step1Error', 'Failed to load flights: ' + err.message);
+            console.error('Error fetching flights:', err);
+        });
+}
+
+// Function to render flights
+function renderFlights(flights) {
+    const resultsListContainer = document.getElementById('results-list');
+    
+    if (!resultsListContainer) {
+        console.error('Results list container not found');
+        return;
+    }
+    
+    // Clear previous results
+    resultsListContainer.innerHTML = '';
+    
+    if (!flights || flights.length === 0) {
+        resultsListContainer.innerHTML = `
+            <div class="no-results">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3>No flights found</h3>
+                <p>Try different dates or nearby airports</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Create flight cards for each result
+    flights.forEach(flight => {
+        const flightCard = document.createElement('div');
+        flightCard.className = 'flight-card';
+        
+        // Format flight data (with fallbacks for missing data)
+        const airline = flight.flight_agency || flight.airline || 'Unknown Airline';
+        const flightNumber = flight.flight_number || 'N/A';
+        const departureTime = flight.departure_time || '--:--';
+        const arrivalTime = flight.arrival_time || '--:--';
+        const price = flight.flight_price ? `₹${flight.flight_price.toFixed(2)}` : 'Price not available';
+        const duration = flight.flight_duration || 'N/A';
+        const stops = flight.stops || 0;
+        
+        flightCard.innerHTML = `
+            <div class="flight-details">
+                <div class="airline-info">
+                    <div class="airline-logo">${airline.charAt(0)}</div>
+                    <div class="airline-name">${airline}</div>
+                    <div class="flight-number">${flightNumber}</div>
+                </div>
+                <div class="schedule">
+                    <div class="departure">
+                        <div class="time">${departureTime}</div>
+                        <div class="airport">${flight.departure || 'Unknown'}</div>
+                    </div>
+                    <div class="duration">
+                        <div class="flight-path">
+                            <div class="stops">${stops === 0 ? 'Direct' : `${stops} stop${stops > 1 ? 's' : ''}`}</div>
+                        </div>
+                        <div class="duration-text">${duration}</div>
+                    </div>
+                    <div class="arrival">
+                        <div class="time">${arrivalTime}</div>
+                        <div class="airport">${flight.arrival || 'Unknown'}</div>
+                    </div>
+                </div>
+                <div class="price-info">
+                    <div class="price">${price}</div>
+                    <button class="book-btn">Book Now</button>
+                </div>
+            </div>
+        `;
+        
+        resultsListContainer.appendChild(flightCard);
+    });
+}
+
     
     // Function to render flights in the results list
     function renderFlights(flights) {
